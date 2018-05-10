@@ -25,6 +25,7 @@ regex=$(jq -r '.source.regex // ""' < $payload)
 username=$(jq -r '.source.username // ""' < $payload)
 password=$(jq -r '.source.password // ""' < $payload)
 skip_ssl_verification=$(jq -r '.source.skip_ssl_verification // ""' < $payload)
+version_schema=$(jq -r '.source.version_schema // ""' < $payload)
 
 repository=$(jq -r '.source.repository // ""' < $payload)
 folder=$(jq -r '.params.folder // ""' < $payload)
@@ -45,6 +46,8 @@ if [ -z "$file" ]; then
   echo "invalid payload (missing file)"
   exit 1
 fi
+
+[ -z "$version_schema" ] && version_schema="semver"
 
 abs_file=$(ls $file)
 filename=$(basename "$abs_file")
@@ -74,7 +77,7 @@ curl $args_security "-T$abs_file" "$args_url"
 
 
 # echo $file $regex
-version=$(applyRegex_version $regex $filename)
+version=$(applyRegex_version $version_schema $regex $filename)
 
 jq -n "{
   version: {version: $(echo $version | jq -R .)}

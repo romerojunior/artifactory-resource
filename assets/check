@@ -16,6 +16,7 @@ regex=$(jq -r '.source.regex // ""' < $payload)
 username=$(jq -r '.source.username // ""' < $payload)
 password=$(jq -r '.source.password // ""' < $payload)
 skip_ssl_verification=$(jq -r '.source.skip_ssl_verification // ""' < $payload)
+version_schema=$(jq -r '.source.version_schema // ""' < $payload)
 
 repository=$(jq -r '.source.repository // ""' < $payload)
 file=$(jq -r '.params.file // ""' < $payload)
@@ -33,6 +34,8 @@ if [ -z "$repository" ]; then
   echo "invalid payload (missing repository)"
   exit 1
 fi
+
+[ -z "$version_schema" ] && version_schema="semver"
 
 # Building CURL request
 args_url="$endpoint/api/storage$repository$folder"
@@ -54,7 +57,7 @@ final_url=$(echo "$args_security" " $args_url")
 
 if [ -z "$version" ]; then
   echo "empty version - return current version"
-  artifactory_current_version "$final_url" "$regex" >&3
+  artifactory_current_version "$final_url" "$version_schema" "$regex" >&3
 else
-  check_version "$final_url" "$regex" "$version" >&3
+  check_version "$final_url" "$version_schema" "$regex" "$version" >&3
 fi

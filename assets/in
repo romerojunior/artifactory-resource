@@ -25,6 +25,7 @@ regex=$(jq -r '.source.regex // ""' < $payload)
 username=$(jq -r '.source.username // ""' < $payload)
 password=$(jq -r '.source.password // ""' < $payload)
 skip_ssl_verification=$(jq -r '.source.skip_ssl_verification // ""' < $payload)
+version_schema=$(jq -r '.source.version_schema // ""' < $payload)
 
 repository=$(jq -r '.source.repository // ""' < $payload)
 file=$(jq -r '.params.file // ""' < $payload)
@@ -48,6 +49,8 @@ if [ -z "$version" ]; then
   exit 1
 fi
 
+[ -z "$version_schema" ] && version_schema="semver"
+
 # Building CURL request
 args_url="$endpoint/api/storage$repository$folder"
 
@@ -66,7 +69,7 @@ fi
 final_url=$(echo "$args_security" " $args_url")
 # echo $final_url
 
-file_json=$(in_file_with_version "$final_url" "$regex" "$version")
+file_json=$(in_file_with_version "$final_url" "$version_schema" "$regex" "$version")
 file=$(echo $file_json | jq -r '.[].uri')
 
 if [ -z "$file" ]; then
