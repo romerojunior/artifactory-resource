@@ -77,7 +77,7 @@ curl $args_security "-T$abs_file" "$args_url"
 
 
 # echo $file $regex
-version=$(applyRegex_version $version_schema $regex $filename)
+version=$(applyRegex_version $regex $filename)
 
 jq -n "{
   version: {version: $(echo $version | jq -R .)}

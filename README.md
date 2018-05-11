@@ -34,6 +34,11 @@ resources:
 * `skip_ssl_verification`: *Optional.* Skip ssl verification when connecting to Artifactory's APIs. Values: ```true``` or ```false```(default).
 * `version_schema`: *Optional.* Specify the versioning schema. Values: ```erv``` or ```semver``` (default).
 
+### Version Schema
+
+* `evr`: Also known as "[e:]v-r" (e = epoch (optional), v = version, r = release), is a common notation used by package managers.
+* `semver`: Also known as "semantic versioning", follows the notation MAJOR.MINOR.PATCH.
+
 ## Parameter Configuration
 
 * `file`: *Required for put* The file to upload to Artifactory
