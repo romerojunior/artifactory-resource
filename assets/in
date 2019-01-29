@@ -31,8 +31,12 @@ file=$(jq -r '.params.file // ""' < $payload)
 folder=$(jq -r '.params.folder // ""' < $payload)
 paramRegex=$(jq -r '.params.regex // ""' < $payload)
 skip_download="$(jq -r '.params.skip_download // false' < $payload)"
+custom_version="$(jq -r '.params.version // ""' < $payload)"
 
 version=$(jq -r '.version.version // ""' < $payload)
+
+echo "DEBUG VERSION: $version"
+echo "DEBUG CUSTOM VERSION: $custom_version"
 
 if [ -z "$endpoint" ]; then
   echo "invalid payload (missing endpoint)"
@@ -43,6 +47,13 @@ if [ -z "$repository" ]; then
   echo "invalid payload (missing repository)"
   exit 1
 fi
+
+if [ ! -z "$custom_version" ]; then
+  version=$custom_version
+fi
+
+echo "DEBUG VERSION: $version"
+echo "DEBUG CUSTOM VERSION: $custom_version"
 
 if [ -z "$version" ]; then
   echo "Missing version"
@@ -80,6 +91,8 @@ if [ -z "$file" ]; then
   echo "file for version '$version' not found"
   exit 1
 fi
+
+echo "DEBUG FILE: $file"
 
 args_url="$endpoint$repository/$file"
 
